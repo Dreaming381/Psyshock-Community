@@ -33,7 +33,9 @@ namespace Latios.Psyshock.Anna.Systems
         public void OnUpdate(ref SystemState state)
         {
             m_handles.Update(ref state);
-            state.Dependency = Physics.BuildCollisionLayer(m_query, in m_handles).ScheduleParallel(out var layer, Allocator.Persistent, state.Dependency);
+            var physicsSettings = latiosWorld.GetPhysicsSettings();
+            state.Dependency    = Physics.BuildCollisionLayer(m_query, in m_handles).WithSettings(physicsSettings.collisionLayerSettings)
+                                  .ScheduleParallel(out var layer, Allocator.Persistent, state.Dependency);
             latiosWorld.sceneBlackboardEntity.SetCollectionComponentAndDisposeOld(new EnvironmentCollisionLayer
             {
                 layer = layer
