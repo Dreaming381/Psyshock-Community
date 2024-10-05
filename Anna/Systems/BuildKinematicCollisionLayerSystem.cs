@@ -96,10 +96,10 @@ namespace Latios.Psyshock.Anna.Systems
 
             [ReadOnly] public NativeArray<int> startIndices;
 
-            public NativeArray<UnitySim.Velocity>                    velocities;
-            public NativeArray<ColliderBody>                         colliderBodies;
-            public NativeArray<Aabb>                                 aabbs;
-            public NativeParallelHashMap<Entity, int>.ParallelWriter entityToIndexMap;
+            [NativeDisableParallelForRestriction] public NativeArray<UnitySim.Velocity> velocities;
+            [NativeDisableParallelForRestriction] public NativeArray<ColliderBody>      colliderBodies;
+            [NativeDisableParallelForRestriction] public NativeArray<Aabb>              aabbs;
+            public NativeParallelHashMap<Entity, int>.ParallelWriter                    entityToIndexMap;
 
             public PhysicsSettings                     physicsSettings;
             public CollisionLayerBucketIndexCalculator bucketCalculator;
@@ -110,7 +110,7 @@ namespace Latios.Psyshock.Anna.Systems
                 var entities           = chunk.GetEntityDataPtrRO(entityHandle);
                 var transforms         = (WorldTransform*)chunk.GetRequiredComponentDataPtrRO(ref transformHandle);
                 var colliders          = (Collider*)chunk.GetRequiredComponentDataPtrRO(ref colliderHandle);
-                var previousTransforms = (PreviousTransform*)chunk.GetRequiredComponentDataPtrRW(ref previousTransformHandle);
+                var previousTransforms = (PreviousTransform*)chunk.GetRequiredComponentDataPtrRO(ref previousTransformHandle);
 
                 for (int i = 0, index = startIndices[unfilteredChunkIndex]; i < chunk.Count; i++, index++)
                 {
