@@ -99,10 +99,10 @@ namespace Latios.Psyshock.Anna.Systems
             public ComponentTypeHandle<RigidBody> rigidBodyHandle;
             public BufferTypeHandle<AddImpulse>   addImpulseHandle;
 
-            public NativeArray<CapturedRigidBodyState>               states;
-            public NativeArray<ColliderBody>                         colliderBodies;
-            public NativeArray<Aabb>                                 aabbs;
-            public NativeParallelHashMap<Entity, int>.ParallelWriter entityToIndexMap;
+            [NativeDisableParallelForRestriction] public NativeArray<CapturedRigidBodyState> states;
+            [NativeDisableParallelForRestriction] public NativeArray<ColliderBody>           colliderBodies;
+            [NativeDisableParallelForRestriction] public NativeArray<Aabb>                   aabbs;
+            public NativeParallelHashMap<Entity, int>.ParallelWriter                         entityToIndexMap;
 
             public PhysicsSettings                     physicsSettings;
             public CollisionLayerBucketIndexCalculator bucketCalculator;
