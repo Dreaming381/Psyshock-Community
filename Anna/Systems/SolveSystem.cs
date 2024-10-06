@@ -24,22 +24,25 @@ namespace Latios.Psyshock.Anna
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var pairStream = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<BodyVsBodyPairStream>(false).pairStream;
-            var b          = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<BodyVsEnvironmentPairStream>(false).pairStream;
-            var c          = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<BodyVsKinematicPairStream>(false).pairStream;
+            var physicsSettings = latiosWorld.GetPhysicsSettings();
+            var pairStream      = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<BodyVsEnvironmentPairStream>(false).pairStream;
+            var b               = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<BodyVsKinematicPairStream>(false).pairStream;
+            var c               = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<BodyVsBodyPairStream>(false).pairStream;
+            var d               = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<BodyConstraintsPairStream>(false).pairStream;
 
-            var states              = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<CapturedRigidBodies>(false).states;
-            var kinematicVelocities = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<CapturedKinematics>(true).velocities;
+            var states     = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<CapturedRigidBodies>(false).states;
+            var kinematics = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<CapturedKinematics>(true).kinematics;
 
-            var jh = new CombineStreamsJob { a = pairStream, b = b, c = c }.Schedule(state.Dependency);
+            var jh = new CombineStreamsJob { a = pairStream, b = b, c = c, d = d }.Schedule(state.Dependency);
 
-            int numIterations  = 4;
+            int numIterations  = physicsSettings.numIterations;
             var solveProcessor = new SolveBodiesProcessor
             {
                 states                 = states,
-                kinematicVelocities    = kinematicVelocities,
+                kinematics             = kinematics,
                 invNumSolverIterations = math.rcp(numIterations),
                 deltaTime              = Time.DeltaTime,
+                inverseDeltaTime       = math.rcp(Time.DeltaTime),
                 firstIteration         = true,
                 lastIteration          = false,
                 icb                    = latiosWorld.syncPoint.CreateInstantiateCommandBuffer<WorldTransform>().AsParallelWriter(),
@@ -67,11 +70,13 @@ namespace Latios.Psyshock.Anna
             public PairStream a;
             public PairStream b;
             public PairStream c;
+            public PairStream d;
 
             public void Execute()
             {
                 a.ConcatenateFrom(ref b);
                 a.ConcatenateFrom(ref c);
+                a.ConcatenateFrom(ref d);
             }
         }
 

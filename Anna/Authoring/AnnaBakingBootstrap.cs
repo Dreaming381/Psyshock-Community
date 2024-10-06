@@ -7,9 +7,9 @@ namespace Latios.Psyshock.Anna.Authoring
 {
     public static class AnnaBakingBootstrap
     {
-        public static void InstallAnna(ref CustomBakingBootstrapContext context)
+        public static void InstallAnnaUnityBakers(ref CustomBakingBootstrapContext context)
         {
-            context.filteredBakerTypes.Add(typeof(RigidBodyBaker));
+            context.filteredBakerTypes.Add(typeof(UnityRigidBodyBaker));
         }
     }
 }

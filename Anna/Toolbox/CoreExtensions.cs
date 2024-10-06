@@ -17,7 +17,8 @@ namespace Latios.Psyshock.Anna
                 collisionLayerSettings = CollisionLayerSettings.kDefault,
                 gravity                = new float3(0f, -9.81f, 0f),
                 linearDamping          = (half)0.05f,
-                angularDamping         = (half)0.05f
+                angularDamping         = (half)0.05f,
+                numIterations          = 4
             };
         }
     }

@@ -32,12 +32,12 @@ namespace Latios.Psyshock.Anna
             var rigidBodyLayer             = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<RigidBodyCollisionLayer>(true).layer;
             var kinematicLayer             = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<KinematicCollisionLayer>(true).layer;
             var states                     = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<CapturedRigidBodies>(true).states;
-            var kinematicVelocities        = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<CapturedKinematics>(true).velocities;
+            var kinematics                 = latiosWorld.sceneBlackboardEntity.GetCollectionComponent<CapturedKinematics>(true).kinematics;
             var pairStream                 = new PairStream(rigidBodyLayer, state.WorldUpdateAllocator);
             var findBodyKinematicProcessor = new FindBodyVsKinematicProcessor
             {
                 states           = states,
-                velocities       = kinematicVelocities,
+                kinematics       = kinematics,
                 pairStream       = pairStream.AsParallelWriter(),
                 deltaTime        = Time.DeltaTime,
                 inverseDeltaTime = math.rcp(Time.DeltaTime),
@@ -50,7 +50,7 @@ namespace Latios.Psyshock.Anna
         struct FindBodyVsKinematicProcessor : IFindPairsProcessor
         {
             [ReadOnly] public NativeArray<CapturedRigidBodyState> states;
-            [ReadOnly] public NativeArray<UnitySim.Velocity>      velocities;
+            [ReadOnly] public NativeArray<CapturedKinematic>      kinematics;
             public PairStream.ParallelWriter                      pairStream;
             public float                                          deltaTime;
             public float                                          inverseDeltaTime;
@@ -60,7 +60,7 @@ namespace Latios.Psyshock.Anna
             public void Execute(in FindPairsResult result)
             {
                 ref readonly var rigidBodyA        = ref states.AsReadOnlySpan()[result.sourceIndexA];
-                var              kinematicVelocity = velocities[result.sourceIndexB];
+                var              kinematicVelocity = kinematics[result.sourceIndexB].velocity;
 
                 var maxDistance = UnitySim.MotionExpansion.GetMaxDistance(in rigidBodyA.motionExpansion);
                 Physics.DistanceBetweenAll(result.colliderA, result.transformA, result.colliderB, result.transformB, maxDistance, ref distanceBetweenAllCache);

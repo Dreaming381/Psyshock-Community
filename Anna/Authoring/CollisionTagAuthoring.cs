@@ -34,7 +34,7 @@ namespace Latios.Psyshock.Anna.Authoring
 
         public override void Bake(UnityEngine.Collider authoring)
         {
-            if (!ShouldBake(authoring))
+            if (this.GetMultiColliderBakeMode(authoring, out _) == MultiColliderBakeMode.Ignore)
                 return;
 
             var  search        = authoring.gameObject;
@@ -95,50 +95,10 @@ namespace Latios.Psyshock.Anna.Authoring
                 AddComponent<RequestPrevious>(      entity);
             }
         }
-
-        // Todo: Expose as utility in Psyshock?
-        bool ShouldBake(UnityEngine.Collider authoring)
-        {
-            if (!authoring.enabled)
-                return false;
-
-            s_colliderCache.Clear();
-            GetComponents(s_colliderCache);
-            if (s_colliderCache.Count > 1)
-            {
-                int enabledCount = 0;
-                foreach (var c in s_colliderCache)
-                    enabledCount += c.enabled ? 1 : 0;
-                if (enabledCount > 1)
-                    return false;
-            }
-            s_compoundCache.Clear();
-            GetComponentsInParent(s_compoundCache);
-            foreach (var compoundAuthoring in s_compoundCache)
-            {
-                if (compoundAuthoring.colliderType == AuthoringColliderTypes.None)
-                    continue;
-                if (!compoundAuthoring.enabled)
-                    continue;
-                if (compoundAuthoring.generateFromChildren)
-                    return false;
-
-                foreach (var child in compoundAuthoring.colliders)
-                {
-                    if (child.gameObject == authoring.gameObject)
-                        return false;
-                }
-            }
-
-            return true;
-        }
     }
 
     public class CollisionTagAuthoringCompoundBaker : Baker<Psyshock.Authoring.ColliderAuthoring>
     {
-        static List<UnityEngine.Collider> s_colliderCache = new List<UnityEngine.Collider>();
-        static List<ColliderAuthoring>    s_compoundCache = new List<ColliderAuthoring>();
-
         [BakingType]
         struct RequestPrevious : IRequestPreviousTransform { }
 

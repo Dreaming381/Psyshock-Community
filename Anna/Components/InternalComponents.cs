@@ -15,7 +15,7 @@ namespace Latios.Psyshock.Anna
 
     internal partial struct CapturedKinematics : ICollectionComponent
     {
-        public NativeArray<UnitySim.Velocity>     velocities;  // src indices
+        public NativeArray<CapturedKinematic>     kinematics;  // src indices
         public NativeParallelHashMap<Entity, int> entityToSrcIndexMap;
 
         public JobHandle TryDispose(JobHandle inputDeps) => inputDeps;  // WorldUpdateAllocator
@@ -36,6 +36,14 @@ namespace Latios.Psyshock.Anna
     }
 
     internal partial struct BodyVsBodyPairStream : ICollectionComponent
+    {
+        public PairStream pairStream;
+
+        public JobHandle TryDispose(JobHandle inputDeps) => inputDeps;  // WorldUpdateAllocator
+    }
+
+    // LockWorldAxesFlags
+    internal partial struct BodyConstraintsPairStream : ICollectionComponent
     {
         public PairStream pairStream;
 

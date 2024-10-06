@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Latios.Psyshock.Anna.Authoring
 {
     [DisableAutoCreation]
-    public class RigidBodyBaker : Baker<UnityEngine.Rigidbody>
+    public class UnityRigidBodyBaker : Baker<UnityEngine.Rigidbody>
     {
         public override void Bake(UnityEngine.Rigidbody authoring)
         {
@@ -21,6 +21,15 @@ namespace Latios.Psyshock.Anna.Authoring
             AddBuffer<AddImpulse>(entity);
             if (authoring.isKinematic)
                 AddComponent<KinematicCollisionTag>(entity);
+
+            if (authoring.constraints != RigidbodyConstraints.None)
+            {
+                AddComponent(entity, new LockWorldAxesFlags
+                {
+                    // For some reason, Unity skips 0x1.
+                    packedFlags = (byte)((int)authoring.constraints >> 1)
+                });
+            }
         }
     }
 }

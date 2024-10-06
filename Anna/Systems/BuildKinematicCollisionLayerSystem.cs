@@ -45,7 +45,7 @@ namespace Latios.Psyshock.Anna.Systems
                 latiosWorld.sceneBlackboardEntity.SetCollectionComponentAndDisposeOld(new CapturedKinematics
                 {
                     entityToSrcIndexMap = new NativeParallelHashMap<Entity, int>(1, state.WorldUpdateAllocator),
-                    velocities          = CollectionHelper.CreateNativeArray<UnitySim.Velocity>(0, state.WorldUpdateAllocator)
+                    kinematics          = CollectionHelper.CreateNativeArray<CapturedKinematic>(0, state.WorldUpdateAllocator)
                 });
                 return;
             }
@@ -53,7 +53,7 @@ namespace Latios.Psyshock.Anna.Systems
             var startIndices     = m_query.CalculateBaseEntityIndexArrayAsync(state.WorldUpdateAllocator, default, out var jh);
             var colliderBodies   = CollectionHelper.CreateNativeArray<ColliderBody>(count, state.WorldUpdateAllocator, NativeArrayOptions.UninitializedMemory);
             var aabbs            = CollectionHelper.CreateNativeArray<Aabb>(count, state.WorldUpdateAllocator, NativeArrayOptions.UninitializedMemory);
-            var velocities       = CollectionHelper.CreateNativeArray<UnitySim.Velocity>(count, state.WorldUpdateAllocator, NativeArrayOptions.UninitializedMemory);
+            var kinematics       = CollectionHelper.CreateNativeArray<CapturedKinematic>(count, state.WorldUpdateAllocator, NativeArrayOptions.UninitializedMemory);
             var entityToIndexMap = new NativeParallelHashMap<Entity, int>(count, state.WorldUpdateAllocator);
             jh                   = new Job
             {
@@ -67,7 +67,7 @@ namespace Latios.Psyshock.Anna.Systems
                 physicsSettings         = physicsSettings,
                 previousTransformHandle = GetComponentTypeHandle<PreviousTransform>(true),
                 startIndices            = startIndices,
-                velocities              = velocities,
+                kinematics              = kinematics,
                 transformHandle         = GetComponentTypeHandle<WorldTransform>(true)
             }.ScheduleParallel(m_query, JobHandle.CombineDependencies(state.Dependency, jh));
 
@@ -81,7 +81,7 @@ namespace Latios.Psyshock.Anna.Systems
             latiosWorld.sceneBlackboardEntity.SetCollectionComponentAndDisposeOld(new CapturedKinematics
             {
                 entityToSrcIndexMap = entityToIndexMap,
-                velocities          = velocities
+                kinematics          = kinematics
             });
             state.Dependency = jh;
         }
@@ -96,7 +96,7 @@ namespace Latios.Psyshock.Anna.Systems
 
             [ReadOnly] public NativeArray<int> startIndices;
 
-            [NativeDisableParallelForRestriction] public NativeArray<UnitySim.Velocity> velocities;
+            [NativeDisableParallelForRestriction] public NativeArray<CapturedKinematic> kinematics;
             [NativeDisableParallelForRestriction] public NativeArray<ColliderBody>      colliderBodies;
             [NativeDisableParallelForRestriction] public NativeArray<Aabb>              aabbs;
             public NativeParallelHashMap<Entity, int>.ParallelWriter                    entityToIndexMap;
@@ -150,7 +150,7 @@ namespace Latios.Psyshock.Anna.Systems
 
                     aabbs[index] = aabb;
 
-                    velocities[index] = velocity;
+                    kinematics[index] = new CapturedKinematic { velocity = velocity, inertialPoseWorldTransform = inertialPoseWorldTransform };
                 }
             }
         }

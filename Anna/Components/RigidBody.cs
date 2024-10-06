@@ -32,6 +32,42 @@ namespace Latios.Psyshock.Anna
         }
     }
 
+    public struct LockWorldAxesFlags : IComponentData
+    {
+        public byte packedFlags;
+
+        public bool positionX
+        {
+            get => (packedFlags & 0x1) != 0;
+            set => packedFlags = (byte)((packedFlags & ~0x1) | math.select(0, 0x1, value));
+        }
+        public bool positionY
+        {
+            get => (packedFlags & 0x2) != 0;
+            set => packedFlags = (byte)((packedFlags & ~0x2) | math.select(0, 0x2, value));
+        }
+        public bool positionZ
+        {
+            get => (packedFlags & 0x4) != 0;
+            set => packedFlags = (byte)((packedFlags & ~0x4) | math.select(0, 0x4, value));
+        }
+        public bool rotationX
+        {
+            get => (packedFlags & 0x8) != 0;
+            set => packedFlags = (byte)((packedFlags & ~0x8) | math.select(0, 0x8, value));
+        }
+        public bool rotationY
+        {
+            get => (packedFlags & 0x10) != 0;
+            set => packedFlags = (byte)((packedFlags & ~0x10) | math.select(0, 0x10, value));
+        }
+        public bool rotationZ
+        {
+            get => (packedFlags & 0x20) != 0;
+            set => packedFlags = (byte)((packedFlags & ~0x20) | math.select(0, 0x20, value));
+        }
+    }
+
     public partial struct RigidBodyCollisionLayer : ICollectionComponent
     {
         public CollisionLayer layer;

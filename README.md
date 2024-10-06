@@ -18,7 +18,7 @@ prefer that route.
 ## Usage
 
 First install the Latios Framework into the project. The current dependency is
-0.11.0.
+0.11.1.
 
 Next, install this package.
 
@@ -39,4 +39,5 @@ Anna is intended to be a beginner’s general-purpose engine.
 
 To use it, use the `CollisionTagAuthoring` component to specify static
 environment and kinematic colliders in your scene. And use the built-in
-`UnityEngine.Rigidbody` component to set up rigid bodies.
+`UnityEngine.Rigidbody` component or the `AnnaRigidBodyAuthoring` component to
+set up rigid bodies.

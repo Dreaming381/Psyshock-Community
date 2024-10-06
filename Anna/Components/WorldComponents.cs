@@ -11,6 +11,7 @@ namespace Latios.Psyshock.Anna
         public float3                 gravity;
         public half                   linearDamping;
         public half                   angularDamping;
+        public byte                   numIterations;
     }
 
     public struct EnvironmentCollisionTag : IComponentData { }
