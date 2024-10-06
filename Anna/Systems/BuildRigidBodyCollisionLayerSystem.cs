@@ -49,6 +49,10 @@ namespace Latios.Psyshock.Anna.Systems
                     entityToSrcIndexMap = new NativeParallelHashMap<Entity, int>(1, state.WorldUpdateAllocator),
                     states              = CollectionHelper.CreateNativeArray<CapturedRigidBodyState>(0, state.WorldUpdateAllocator)
                 });
+                latiosWorld.sceneBlackboardEntity.SetCollectionComponentAndDisposeOld(new BodyConstraintsPairStream
+                {
+                    pairStream = new PairStream(physicsSettings.collisionLayerSettings, state.WorldUpdateAllocator)
+                });
                 return;
             }
 

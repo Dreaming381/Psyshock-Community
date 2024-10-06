@@ -17,7 +17,11 @@ namespace Latios.Psyshock.Anna.Authoring
         public bool3 lockRotationAxes    = false;
         public bool  forceLockAxesExists = false;
 
+        [Header("Initial State")]
         public float3 initialVelocity = float3.zero;
+
+        [Header("Features")]
+        public bool supportExternalForces = true;
     }
 
     public class AnnaRigidBodyAuthoringBaker : Baker<AnnaRigidBodyAuthoring>
@@ -42,6 +46,10 @@ namespace Latios.Psyshock.Anna.Authoring
                 {
                     packedFlags = (byte)(math.bitmask(new bool4(authoring.lockPositionAxes, false)) | (math.bitmask(new bool4(authoring.lockRotationAxes, false)) << 3))
                 });
+            }
+            if (authoring.supportExternalForces)
+            {
+                AddBuffer<AddImpulse>(entity);
             }
         }
     }
