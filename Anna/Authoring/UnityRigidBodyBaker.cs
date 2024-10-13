@@ -13,8 +13,12 @@ namespace Latios.Psyshock.Anna.Authoring
             var entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new RigidBody
             {
-                inverseMass              = 1f / authoring.mass,
-                velocity                 = new UnitySim.Velocity { linear = authoring.linearVelocity, angular = authoring.angularVelocity },
+                inverseMass = 1f / authoring.mass,
+#if UNITY_6000_0_OR_NEWER
+                velocity = new UnitySim.Velocity { linear = authoring.linearVelocity, angular = authoring.angularVelocity },
+#else
+                velocity = new UnitySim.Velocity { linear = authoring.velocity, angular = authoring.angularVelocity },
+#endif
                 coefficientOfFriction    = (half)0.3f,
                 coefficientOfRestitution = (half)0.3f
             });
